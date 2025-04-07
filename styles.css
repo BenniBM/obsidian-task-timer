@@ -550,14 +550,35 @@ video {
 .mr-3 {
   margin-right: 0.75rem;
 }
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.block {
+  display: block;
+}
 .flex {
   display: flex;
 }
 .min-w-\[250px\] {
   min-width: 250px;
 }
+.min-w-\[350px\] {
+  min-width: 350px;
+}
+.min-w-\[300px\] {
+  min-width: 300px;
+}
+.min-w-\[325px\] {
+  min-width: 325px;
+}
 .max-w-\[350px\] {
   max-width: 350px;
+}
+.max-w-\[300px\] {
+  max-width: 300px;
+}
+.max-w-\[325px\] {
+  max-width: 325px;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -571,6 +592,9 @@ video {
 .items-center {
   align-items: center;
 }
+.justify-start {
+  justify-content: flex-start;
+}
 .justify-end {
   justify-content: flex-end;
 }
@@ -579,6 +603,11 @@ video {
 }
 .gap-2 {
   gap: 0.5rem;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .rounded {
   border-radius: 0.25rem;
@@ -594,6 +623,9 @@ video {
 }
 .border {
   border-width: 1px;
+}
+.border-2 {
+  border-width: 2px;
 }
 .border-background-modifier-border {
   border-color: var(--background-modifier-border);
@@ -638,6 +670,10 @@ video {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
 .text-center {
   text-align: center;
 }
@@ -652,8 +688,25 @@ video {
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
 .font-semibold {
   font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 .shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -688,6 +741,11 @@ video {
 
 .hover\:-translate-y-1:hover {
   --tw-translate-y: -0.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hover\:-translate-y-0\.5:hover {
+  --tw-translate-y: -0.125rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
