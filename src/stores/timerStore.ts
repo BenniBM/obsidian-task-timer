@@ -42,7 +42,7 @@ function createTimerStore() {
                     timer.remainingTime = timer.endTime - Date.now();
                     timer.isPaused = true;
                     newTimers.set(timerId, { ...timer });
-                    new Notice(`Timer paused: ${timer.description}`);
+                    new Notice(`Timer paused`);
                 }
                 return newTimers;
             });

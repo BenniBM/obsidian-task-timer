@@ -15,10 +15,12 @@ import "./main.css";
 
 interface TaskTimerSettings {
     notificationSound: boolean;
+    focusOnComplete: boolean;
 }
 
 const DEFAULT_SETTINGS: TaskTimerSettings = {
     notificationSound: true,
+    focusOnComplete: true,
 };
 
 export default class TaskTimerPlugin extends Plugin {
@@ -141,6 +143,10 @@ export default class TaskTimerPlugin extends Plugin {
                 playNotificationSound();
             }
 
+            if (this.settings.focusOnComplete) {
+                this.focusObsidianWindow();
+            }
+
             // Mark todo as complete
             const completedLine = updatedLine.replace(/^- \[\*\]/, "- [x]");
             editor.setLine(cursor.line, completedLine);
@@ -149,7 +155,7 @@ export default class TaskTimerPlugin extends Plugin {
             timerStore.removeTimer(timerId);
             this.notifiedTimers.delete(timerId);
 
-            new Notice(`✅ Timer completed: ${description}!`);
+            new Notice(`✅ Timer completed!`);
         }, milliseconds);
 
         // Add timer to store
@@ -196,6 +202,18 @@ class TaskTimerSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.notificationSound)
                     .onChange(async (value) => {
                         this.plugin.settings.notificationSound = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Focus Window")
+            .setDesc("Focus the Obsidian window when a timer completes")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.focusOnComplete)
+                    .onChange(async (value) => {
+                        this.plugin.settings.focusOnComplete = value;
                         await this.plugin.saveSettings();
                     })
             );

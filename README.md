@@ -1,43 +1,54 @@
-# obsidian-svelte-starter
+# Obsidian Task Timer Plugin
 
-A starter template for creating an Obsidian plugin with SvelteJS.
+A simple and efficient timer plugin for Obsidian that helps you track time spent on your tasks directly from your todo lists.
 
-# Features
+## Features
 
-This project comes preconfigured with [Typescript](https://www.typescriptlang.org/), [vite](https://vitejs.dev), and
-[Rollup.js](https://rollupjs.org).
+-   ⏱️ Create timers directly from todo items
+-   🔄 Auto-completion of todos when timers finish
+-   🔔 Optional notification sounds
+-   🪟 Optional redirect to Obsidian after timer completion
+-   👁️ Always-visible timer display
+-   ⌨️ Keyboard shortcut support (Ctrl+H)
 
-# Getting Started
+## Usage
 
-Click "use this template" to create your own fork of this repo. Make sure to reference the official sample plugin for
-information about how to get started with the Obsidian API and how to submit your plugin to the Community Plugin
-Gallery.
+1. Create a todo item with a time specification:
 
-```bash
-# for local development
-npm install
-npm run dev
-// Or yarn dev
+    ```markdown
+    -   [ ] 5min | Write documentation
+    -   [ ] 30s | Quick review
+    ```
 
-# for a production bundle
-npm install
-npm run build
-// Or yarn build
+2. Place your cursor on the todo line and:
 
-# change version
-npm bumpversion
-// Or yarn bumpversion
-```
+    - Press `Ctrl+H`, or
+    - Use the command palette and search for "Start Timer for Selected Todo"
 
-# Stats
+3. The timer will:
+    - Change the checkbox to `[*]` while running
+    - Show remaining time in the bottom-right corner
+    - Mark the task as complete `[x]` when finished
+    - Play a sound (if enabled)
+    - Redirect back to obsidian (if enabled)
 
-The production output of this sample plugin is ~10 KB.
+## Time Format
 
-```
-./styles.css   0.44 KiB / gzip: 0.19 KiB
-./main.js      12.63 KiB / gzip: 3.70 KiB
-```
+-   Minutes: `5min`, `10min`, etc.
+-   Seconds: `30s`, `45s`, etc.
 
-## API Documentation
+## Settings
 
-See https://github.com/obsidianmd/obsidian-api
+-   **Notification Sound**: Toggle sound when timer completes
+-   **Focus Window**: Toggle window focus when timer completes
+
+## Installation
+
+1. Open Obsidian Settings
+2. Go to Community Plugins and disable Safe Mode
+3. Click Browse and search for "Task Timer"
+4. Install the plugin and enable it
+
+## License
+
+MIT
