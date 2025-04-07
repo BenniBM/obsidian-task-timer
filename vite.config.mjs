@@ -3,6 +3,8 @@ import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import autoPreprocess from 'svelte-preprocess';
 import builtins from 'builtin-modules';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 const prod = (process.argv[2] === 'production');
 
@@ -10,7 +12,9 @@ export default defineConfig(() => {
     return {
         plugins: [
             svelte({
-                preprocess: autoPreprocess()
+                preprocess: autoPreprocess({
+                    postcss: true,
+                })
             })
         ],
         watch: !prod,
@@ -25,7 +29,14 @@ export default defineConfig(() => {
                 entry: path.resolve(__dirname, './src/starterIndex.ts'),
                 formats: ['cjs'],
             },
-            css: {},
+            css: {
+                postcss: {
+                    plugins: [
+                        tailwindcss,
+                        autoprefixer,
+                    ],
+                },
+            },
             rollupOptions: {
                 output: {
                     // Overwrite default Vite output fileName

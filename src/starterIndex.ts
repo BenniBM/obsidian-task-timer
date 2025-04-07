@@ -11,6 +11,7 @@ import type { MarkdownFileInfo } from "obsidian";
 import TimerDisplay from "./ui/TimerDisplay.svelte";
 import { timerStore } from "./stores/timerStore";
 import { playNotificationSound } from "./sound";
+import "./main.css";
 
 interface TaskTimerSettings {
     notificationSound: boolean;

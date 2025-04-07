@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .text-warning {
+        color: var(--text-warning);
+    }
+    .text-error {
+        color: var(--text-error);
+    }
+    .text-muted {
+        color: var(--text-muted);
+    }
+    .bg-background-primary {
+        background-color: var(--background-primary);
+    }
+    .bg-background-secondary {
+        background-color: var(--background-secondary);
+    }
+    .bg-background-modifier-error {
+        background-color: var(--background-modifier-error);
+    }
+    .bg-background-modifier-error-hover {
+        background-color: var(--background-modifier-error-hover);
+    }
+    .border-background-modifier-border {
+        border-color: var(--background-modifier-border);
+    }
+    .bg-background-modifier-hover {
+        background-color: var(--background-modifier-hover);
+    }
+}
+
+@layer utilities {
+    @keyframes slide-up {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .animate-slide-up {
+        animation: slide-up 0.3s ease-out;
+    }
+}
