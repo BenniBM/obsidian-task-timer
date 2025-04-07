@@ -594,23 +594,11 @@ video {
 .border {
   border-width: 1px;
 }
-.border-2 {
-  border-width: 2px;
-}
 .border-t {
   border-top-width: 1px;
 }
-.border-solid {
-  border-style: solid;
-}
 .border-background-modifier-border {
   border-color: var(--background-modifier-border);
-}
-.border-background-primary {
-  border-color: var(--background-primary);
-}
-.border-text-error {
-  border-color: var(--text-error);
 }
 .bg-background-modifier-error {
   background-color: var(--background-modifier-error);

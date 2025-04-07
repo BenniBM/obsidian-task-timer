@@ -43,6 +43,7 @@
         if (timer.isPaused) return "";
         const timeRemaining = timer.endTime - Date.now();
         if (timeRemaining < 60000) return "text-error";
+        if (timeRemaining > 60000) return "text-white";
         return "";
     }
 </script>
@@ -58,7 +59,7 @@
                     : ""}
             >
                 <h2
-                    class="text-3xl text-white font-bold tracking-wide {getTimerClass(
+                    class="text-3xl font-bold tracking-wide {getTimerClass(
                         timer,
                     )}"
                 >
