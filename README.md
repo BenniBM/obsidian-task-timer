@@ -2,7 +2,7 @@
 
 A simple and efficient timer plugin for Obsidian that helps you track time spent on your tasks directly from your todo lists.
 
-![demo][demo.png]
+![demo](demo.png)
 
 ## Features
 
