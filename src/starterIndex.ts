@@ -94,6 +94,26 @@ export default class TaskTimerPlugin extends Plugin {
             return;
         }
 
+        // Get the description part of the todo (before checking time format)
+        const description = line
+            .replace(/^- \[.\] \d*(min|s)? ?\| ?/, "")
+            .trim();
+
+        // Check if there's already a timer for this task
+        const timers = timerStore.getTimers();
+        const existingTimerEntry = Array.from(timers.entries()).find(
+            ([_, timer]) =>
+                timer.description === description &&
+                timer.lineNumber === cursor.line
+        );
+
+        if (existingTimerEntry) {
+            const [timerId] = existingTimerEntry;
+            timerStore.cancelTimer(timerId);
+            editor.setLine(cursor.line, line.replace("- [*]", "- [ ]"));
+            return;
+        }
+
         // Extract time from the todo title
         const timeMatch = line.match(/^- \[ \] (\d+)(min|s) \|/);
         if (!timeMatch) {
@@ -107,9 +127,6 @@ export default class TaskTimerPlugin extends Plugin {
         const timeUnit = timeMatch[2];
         const milliseconds =
             timeUnit === "min" ? timeValue * 60 * 1000 : timeValue * 1000;
-
-        // Get the description part of the todo
-        const description = line.replace(/^- \[ \] \d+(min|s) \| /, "").trim();
 
         // Replace checkbox with "in progress" symbol
         const updatedLine = line.replace(/^- \[ \]/, "- [*]");
@@ -144,6 +161,16 @@ export default class TaskTimerPlugin extends Plugin {
             isPaused: false,
             remainingTime: milliseconds,
         });
+    }
+
+    focusObsidianWindow() {
+        // @ts-ignore
+        const win = window.require?.("electron")?.remote?.getCurrentWindow();
+        if (win) {
+            win.show();
+            win.focus();
+            return;
+        }
     }
 }
 

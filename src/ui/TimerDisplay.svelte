@@ -8,10 +8,6 @@
 
     // Subscribe to timer store
     const unsubscribe = timerStore.subscribe((value) => {
-        console.log(
-            "TimerDisplay received store update:",
-            Array.from(value.entries()),
-        );
         timers = value;
     });
 

@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 import { Notice } from "obsidian";
 import { playNotificationSound } from "../sound";
 
@@ -16,34 +16,24 @@ function createTimerStore() {
 
     return {
         subscribe,
+        getTimers: () => get(store),
         addTimer: (timerId: string, timer: ActiveTimer) => {
-            console.log("Adding timer:", { timerId, timer });
             update((timers) => {
                 // Create a new Map with existing entries plus the new one
                 const newTimers = new Map(timers);
                 newTimers.set(timerId, timer);
-                console.log(
-                    "Current timers after add:",
-                    Array.from(newTimers.entries())
-                );
                 return newTimers;
             });
         },
         removeTimer: (timerId: string) => {
-            console.log("Removing timer:", timerId);
             update((timers) => {
                 // Create a new Map without the removed timer
                 const newTimers = new Map(timers);
                 newTimers.delete(timerId);
-                console.log(
-                    "Current timers after remove:",
-                    Array.from(newTimers.entries())
-                );
                 return newTimers;
             });
         },
         pauseTimer: (timerId: string) => {
-            console.log("Pausing timer:", timerId);
             update((timers) => {
                 const newTimers = new Map(timers);
                 const timer = newTimers.get(timerId);
@@ -61,7 +51,6 @@ function createTimerStore() {
             timerId: string,
             onComplete: (timer: ActiveTimer) => void
         ) => {
-            console.log("Resuming timer:", timerId);
             update((timers) => {
                 const newTimers = new Map(timers);
                 const timer = newTimers.get(timerId);
@@ -79,13 +68,11 @@ function createTimerStore() {
                             finalTimers.delete(timerId);
                             return finalTimers;
                         });
-                        new Notice(
-                            `Timer completed: ${updatedTimer.description}!`
-                        );
+                        new Notice(`Timer completed!`);
                     }, timer.remainingTime);
 
                     newTimers.set(timerId, updatedTimer);
-                    new Notice(`Timer resumed: ${updatedTimer.description}`);
+                    new Notice(`Timer resumed`);
                 }
                 return newTimers;
             });
@@ -96,14 +83,13 @@ function createTimerStore() {
                 const timer = newTimers.get(timerId);
                 if (timer) {
                     clearTimeout(timer.timeout);
-                    new Notice(`Timer cancelled: ${timer.description}`);
+                    new Notice(`Timer cancelled`);
                     newTimers.delete(timerId);
                 }
                 return newTimers;
             });
         },
         clear: () => {
-            console.log("Clearing all timers");
             update((timers) => {
                 timers.forEach((timer) => clearTimeout(timer.timeout));
                 return new Map();
@@ -112,4 +98,5 @@ function createTimerStore() {
     };
 }
 
-export const timerStore = createTimerStore();
+const store = createTimerStore();
+export const timerStore = store;
