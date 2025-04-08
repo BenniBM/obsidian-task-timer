@@ -2,9 +2,12 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
     import { timerStore, type ActiveTimer } from "../stores/timerStore";
+    import { createEventDispatcher } from "svelte";
 
+    const dispatch = createEventDispatcher();
     let timers: Map<string, ActiveTimer>;
     let updateInterval: ReturnType<typeof setInterval>;
+    export let focusMode = false;
 
     // Subscribe to timer store
     const unsubscribe = timerStore.subscribe((value) => {
@@ -22,6 +25,11 @@
         clearInterval(updateInterval);
         unsubscribe();
     });
+
+    function stopFocusMode() {
+        focusMode = false;
+        dispatch("stopFocus");
+    }
 
     function getTimeDisplay(timer: ActiveTimer): string {
         const now = Date.now();
@@ -84,5 +92,23 @@
                 </div>
             </div>
         {/each}
+    </div>
+{:else if focusMode}
+    <div
+        class="fixed bottom-5 right-5 bg-background-secondary border border-background-modifier-border rounded-xl p-8 z-50 max-w-[325px] min-w-[325px] shadow-lg animate-slide-up"
+    >
+        <div class="text-error">
+            <h2 class="text-xl font-bold mb-2">Focus Mode Active</h2>
+            <p class="text-sm text-muted">
+                You need to start a timer to stay focused! Press Ctrl+H to start
+                a timer for your current task.
+            </p>
+            <button
+                class="px-4 py-1 mt-4 rounded-md bg-background-primary cursor-pointer text-sm transition-all duration-200 hover:bg-text-error hover:text-background-primary hover:-translate-y-0.5"
+                on:click={stopFocusMode}
+            >
+                Stop Focus
+            </button>
+        </div>
     </div>
 {/if}

@@ -27,6 +27,7 @@ export default class TaskTimerPlugin extends Plugin {
     settings: TaskTimerSettings = DEFAULT_SETTINGS;
     notifiedTimers: Set<string> = new Set();
     private timerComponent: TimerDisplay | null = null;
+    private focusModeInterval: NodeJS.Timeout | null = null;
 
     async onload() {
         await this.loadSettings();
@@ -36,6 +37,18 @@ export default class TaskTimerPlugin extends Plugin {
         document.body.appendChild(timerContainer);
         this.timerComponent = new TimerDisplay({
             target: timerContainer,
+            props: {
+                focusMode: false,
+            },
+        });
+
+        // Listen for focus mode stop event
+        this.timerComponent.$on("stopFocus", () => {
+            if (this.focusModeInterval) {
+                clearInterval(this.focusModeInterval);
+                this.focusModeInterval = null;
+                new Notice("Focus mode disabled");
+            }
         });
 
         // Add ribbon icon
@@ -59,6 +72,20 @@ export default class TaskTimerPlugin extends Plugin {
             },
         });
 
+        // Add the command to start focus mode
+        this.addCommand({
+            id: "start-todo-timer-focus-mode",
+            name: "Toggle Focus Mode",
+            editorCallback: (
+                editor: Editor,
+                view: MarkdownView | MarkdownFileInfo
+            ) => {
+                if (view instanceof MarkdownView) {
+                    this.toggleFocusMode();
+                }
+            },
+        });
+
         // Add settings tab
         this.addSettingTab(new TaskTimerSettingTab(this.app, this));
     }
@@ -66,6 +93,11 @@ export default class TaskTimerPlugin extends Plugin {
     onunload() {
         // Cleanup timers
         timerStore.clear();
+
+        // Clear focus mode interval
+        if (this.focusModeInterval) {
+            clearInterval(this.focusModeInterval);
+        }
 
         // Destroy timer component
         if (this.timerComponent) {
@@ -176,6 +208,34 @@ export default class TaskTimerPlugin extends Plugin {
             win.focus();
             return;
         }
+    }
+
+    toggleFocusMode() {
+        if (this.focusModeInterval) {
+            // Disable focus mode
+            clearInterval(this.focusModeInterval);
+            this.focusModeInterval = null;
+            if (this.timerComponent) {
+                this.timerComponent.$set({ focusMode: false });
+            }
+            new Notice("Focus mode disabled");
+            return;
+        }
+
+        // Enable focus mode
+        if (this.timerComponent) {
+            this.timerComponent.$set({ focusMode: true });
+        }
+        new Notice("Focus mode enabled - start a timer to stay focused!");
+
+        // Check every 5 seconds if there's a timer running
+        this.focusModeInterval = setInterval(() => {
+            console.log(this.focusModeInterval);
+            const timers = timerStore.getTimers();
+            if (timers.size === 0) {
+                this.focusObsidianWindow();
+            }
+        }, 5000);
     }
 }
 
