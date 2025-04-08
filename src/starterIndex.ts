@@ -45,9 +45,7 @@ export default class TaskTimerPlugin extends Plugin {
         // Listen for focus mode stop event
         this.timerComponent.$on("stopFocus", () => {
             if (this.focusModeInterval) {
-                clearInterval(this.focusModeInterval);
-                this.focusModeInterval = null;
-                new Notice("Focus mode disabled");
+                this.disableFocusMode(this.focusModeInterval);
             }
         });
 
@@ -210,15 +208,19 @@ export default class TaskTimerPlugin extends Plugin {
         }
     }
 
+    disableFocusMode(focusModeInterval: NodeJS.Timeout) {
+        // Disable focus mode
+        clearInterval(focusModeInterval);
+        this.focusModeInterval = null;
+        new Notice("Focus mode disabled");
+    }
+
     toggleFocusMode() {
         if (this.focusModeInterval) {
-            // Disable focus mode
-            clearInterval(this.focusModeInterval);
-            this.focusModeInterval = null;
+            this.disableFocusMode(this.focusModeInterval);
             if (this.timerComponent) {
                 this.timerComponent.$set({ focusMode: false });
             }
-            new Notice("Focus mode disabled");
             return;
         }
 
@@ -230,7 +232,6 @@ export default class TaskTimerPlugin extends Plugin {
 
         // Check every 5 seconds if there's a timer running
         this.focusModeInterval = setInterval(() => {
-            console.log(this.focusModeInterval);
             const timers = timerStore.getTimers();
             if (timers.size === 0) {
                 this.focusObsidianWindow();
