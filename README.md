@@ -11,7 +11,6 @@ A simple and efficient timer plugin for Obsidian that helps you track time spent
 -   🔔 Optional notification sounds
 -   🪟 Optional redirect to Obsidian after timer completion
 -   👁️ Always-visible timer display
--   ⌨️ Keyboard shortcut support (Ctrl+H)
 
 ## Usage
 
@@ -24,7 +23,6 @@ A simple and efficient timer plugin for Obsidian that helps you track time spent
 
 2. Place your cursor on the todo line and:
 
-    - Press `Ctrl+H`, or
     - Use the command palette and search for "Start Timer for Selected Todo"
 
 3. The timer will:

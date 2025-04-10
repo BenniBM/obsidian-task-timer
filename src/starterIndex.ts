@@ -45,11 +45,10 @@ export default class TaskTimerPlugin extends Plugin {
             );
         });
 
-        // Add the command to start a timer with Ctrl+H
+        // Add the command to start a timer
         this.addCommand({
             id: "start-todo-timer",
             name: "Start Timer for Selected Todo",
-            hotkeys: [{ modifiers: ["Ctrl"], key: "H" }],
             editorCallback: (
                 editor: Editor,
                 view: MarkdownView | MarkdownFileInfo
