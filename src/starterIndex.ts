@@ -146,9 +146,10 @@ export default class TaskTimerPlugin extends Plugin {
                 this.focusObsidianWindow();
             }
 
-            // Mark todo as complete
-            const completedLine = updatedLine.replace(/^- \[\*\]/, "- [x]");
-            editor.setLine(cursor.line, completedLine);
+            setTimeout(() => {
+                const completedLine = updatedLine.replace(/^- \[\*\]/, "- [x]");
+                editor.setLine(cursor.line, completedLine);
+            }, 1000);
 
             // Remove from active timers
             timerStore.removeTimer(timerId);
@@ -172,7 +173,6 @@ export default class TaskTimerPlugin extends Plugin {
         // @ts-ignore
         const win = window.require?.("electron")?.remote?.getCurrentWindow();
         if (win) {
-            win.show();
             win.focus();
             return;
         }
