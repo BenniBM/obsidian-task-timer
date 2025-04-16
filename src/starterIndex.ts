@@ -49,6 +49,30 @@ export default class TaskTimerPlugin extends Plugin {
             }
         });
 
+        // Listen for task end event
+        this.timerComponent.$on("endTask", (event) => {
+            const { timerId, actualTime } = event.detail;
+            const timer = timerStore.getTimers().get(timerId);
+            if (timer) {
+                const editor =
+                    this.app.workspace.getActiveViewOfType(
+                        MarkdownView
+                    )?.editor;
+                if (editor) {
+                    const line = editor.getLine(timer.lineNumber);
+                    // line looks like this: "- [ ] 5min | Task description"
+                    // and updated to:       "- [x] 6min | Task description"
+                    const completedLine = line.replace(
+                        /^- \[\*\] \d+(s|min) \|/,
+                        `- [x] ${actualTime}min |`
+                    );
+                    editor.setLine(timer.lineNumber, completedLine);
+                }
+                timerStore.removeTimer(timerId);
+                new Notice(`Task completed in ${actualTime} minutes`);
+            }
+        });
+
         // Add ribbon icon
         this.addRibbonIcon("clock", "Task Timer", () => {
             new Notice(
@@ -176,16 +200,9 @@ export default class TaskTimerPlugin extends Plugin {
                 this.focusObsidianWindow();
             }
 
-            setTimeout(() => {
-                const completedLine = updatedLine.replace(/^- \[\*\]/, "- [x]");
-                editor.setLine(cursor.line, completedLine);
-            }, 1000);
-
-            // Remove from active timers
-            timerStore.removeTimer(timerId);
-            this.notifiedTimers.delete(timerId);
-
-            new Notice(`✅ Timer completed!`);
+            // Instead of completing the task, set it to overtime
+            timerStore.setOvertime(timerId);
+            new Notice(`Timer exceeded - now in overtime!`);
         }, milliseconds);
 
         // Add timer to store
@@ -196,6 +213,8 @@ export default class TaskTimerPlugin extends Plugin {
             lineNumber: cursor.line,
             isPaused: false,
             remainingTime: milliseconds,
+            isOvertime: false,
+            startTime: Date.now(),
         });
     }
 

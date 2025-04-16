@@ -33,6 +33,13 @@
 
     function getTimeDisplay(timer: ActiveTimer): string {
         const now = Date.now();
+        if (timer.isOvertime) {
+            const overtimeMs = now - timer.endTime;
+            const minutes = Math.floor(overtimeMs / 60000);
+            const seconds = Math.floor((overtimeMs % 60000) / 1000);
+            return `+${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+
         const timeRemaining = timer.isPaused
             ? timer.remainingTime
             : Math.max(0, timer.endTime - now);
@@ -44,11 +51,18 @@
     }
 
     function getTimerClass(timer: ActiveTimer): string {
+        if (timer.isOvertime) return "text-error";
         if (timer.isPaused) return "";
         const timeRemaining = timer.endTime - Date.now();
         if (timeRemaining < 60000) return "text-error";
         if (timeRemaining > 60000) return "text-white";
         return "";
+    }
+
+    function endTask(timerId: string, timer: ActiveTimer) {
+        const totalTimeMs = Date.now() - timer.startTime;
+        const minutes = Math.ceil(totalTimeMs / 60000);
+        dispatch("endTask", { timerId, actualTime: minutes });
     }
 </script>
 
@@ -71,24 +85,35 @@
                 </h2>
                 <span
                     class="mr-3 flex-1 mb-4 text-sm block truncate"
-                    title={timer.description}>{timer.description}</span
+                    title={timer.description}
                 >
+                    {timer.description}
+                </span>
                 <div class="flex justify-start mt-2 gap-2">
-                    <button
-                        class="px-4 py-1 rounded-md cursor-pointer text-sm transition-all duration-200 hover:bg-background-modifier-hover hover:-translate-y-0.5"
-                        on:click={() =>
-                            timer.isPaused
-                                ? timerStore.resumeTimer(timerId, () => {})
-                                : timerStore.pauseTimer(timerId)}
-                    >
-                        {timer.isPaused ? "Resume" : "Pause"}
-                    </button>
-                    <button
-                        class="px-4 py-1 rounded-md bg-background-primary cursor-pointer text-sm transition-all duration-200 hover:bg-text-error hover:text-background-primary hover:-translate-y-0.5"
-                        on:click={() => timerStore.cancelTimer(timerId)}
-                    >
-                        Delete
-                    </button>
+                    {#if timer.isOvertime}
+                        <button
+                            class="px-4 py-1 rounded-md bg-text-error text-background-primary cursor-pointer text-sm transition-all duration-200 hover:opacity-80 hover:-translate-y-0.5"
+                            on:click={() => endTask(timerId, timer)}
+                        >
+                            End Task
+                        </button>
+                    {:else}
+                        <button
+                            class="px-4 py-1 rounded-md cursor-pointer text-sm transition-all duration-200 hover:bg-background-modifier-hover hover:-translate-y-0.5"
+                            on:click={() =>
+                                timer.isPaused
+                                    ? timerStore.resumeTimer(timerId, () => {})
+                                    : timerStore.pauseTimer(timerId)}
+                        >
+                            {timer.isPaused ? "Resume" : "Pause"}
+                        </button>
+                        <button
+                            class="px-4 py-1 rounded-md bg-background-primary cursor-pointer text-sm transition-all duration-200 hover:bg-text-error hover:text-background-primary hover:-translate-y-0.5"
+                            on:click={() => timerStore.cancelTimer(timerId)}
+                        >
+                            Delete
+                        </button>
+                    {/if}
                 </div>
             </div>
         {/each}

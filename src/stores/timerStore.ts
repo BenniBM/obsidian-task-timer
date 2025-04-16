@@ -9,6 +9,8 @@ export interface ActiveTimer {
     lineNumber: number;
     isPaused: boolean;
     remainingTime: number;
+    isOvertime: boolean;
+    startTime: number;
 }
 
 function createTimerStore() {
@@ -93,6 +95,18 @@ function createTimerStore() {
             update((timers) => {
                 timers.forEach((timer) => clearTimeout(timer.timeout));
                 return new Map();
+            });
+        },
+        setOvertime: (timerId: string) => {
+            update((timers) => {
+                const newTimers = new Map(timers);
+                const timer = newTimers.get(timerId);
+                if (timer) {
+                    timer.isOvertime = true;
+                    clearTimeout(timer.timeout);
+                    newTimers.set(timerId, { ...timer });
+                }
+                return newTimers;
             });
         },
     };
