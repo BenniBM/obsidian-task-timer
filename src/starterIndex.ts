@@ -163,9 +163,23 @@ export default class TaskTimerPlugin extends Plugin {
         );
 
         if (existingTimerEntry) {
-            const [timerId] = existingTimerEntry;
-            timerStore.cancelTimer(timerId);
-            editor.setLine(cursor.line, line.replace("- [*]", "- [ ]"));
+            const [timerId, timer] = existingTimerEntry;
+            // If the task is in progress (has [*]), complete it
+            if (line.includes("- [*]")) {
+                const totalTimeMs = Date.now() - timer.startTime;
+                const actualTime = Math.ceil(totalTimeMs / 60000);
+                const completedLine = line.replace(
+                    /^- \[\*\] \d+(s|min) \|/,
+                    `- [x] ${actualTime}min |`
+                );
+                editor.setLine(cursor.line, completedLine);
+                timerStore.cancelTimer(timerId);
+                new Notice(`Task completed in ${actualTime} minutes`);
+            } else {
+                // If it's not in progress (just selected), cancel it
+                timerStore.cancelTimer(timerId);
+                editor.setLine(cursor.line, line.replace("- [*]", "- [ ]"));
+            }
             return;
         }
 
