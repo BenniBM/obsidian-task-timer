@@ -11,6 +11,7 @@ export interface ActiveTimer {
     remainingTime: number;
     isOvertime: boolean;
     startTime: number;
+    overtimeInterval?: NodeJS.Timeout;
 }
 
 function createTimerStore() {
@@ -31,6 +32,10 @@ function createTimerStore() {
             update((timers) => {
                 // Create a new Map without the removed timer
                 const newTimers = new Map(timers);
+                const timer = newTimers.get(timerId);
+                if (timer?.overtimeInterval) {
+                    clearInterval(timer.overtimeInterval);
+                }
                 newTimers.delete(timerId);
                 return newTimers;
             });
@@ -85,6 +90,9 @@ function createTimerStore() {
                 const timer = newTimers.get(timerId);
                 if (timer) {
                     clearTimeout(timer.timeout);
+                    if (timer.overtimeInterval) {
+                        clearInterval(timer.overtimeInterval);
+                    }
                     new Notice(`Timer cancelled`);
                     newTimers.delete(timerId);
                 }
@@ -97,13 +105,20 @@ function createTimerStore() {
                 return new Map();
             });
         },
-        setOvertime: (timerId: string) => {
+        setOvertime: (timerId: string, focusCallback: () => void) => {
             update((timers) => {
                 const newTimers = new Map(timers);
                 const timer = newTimers.get(timerId);
                 if (timer) {
                     timer.isOvertime = true;
                     clearTimeout(timer.timeout);
+
+                    // Set up recurring focus every 3 minutes
+                    timer.overtimeInterval = setInterval(() => {
+                        focusCallback();
+                        new Notice("Task is in overtime!");
+                    }, 3 * 60 * 1000); // 2 minutes
+
                     newTimers.set(timerId, { ...timer });
                 }
                 return newTimers;

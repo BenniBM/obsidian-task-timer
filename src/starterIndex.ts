@@ -215,7 +215,9 @@ export default class TaskTimerPlugin extends Plugin {
             }
 
             // Instead of completing the task, set it to overtime
-            timerStore.setOvertime(timerId);
+            timerStore.setOvertime(timerId, () => {
+                this.focusObsidianWindow();
+            });
             new Notice(`Timer exceeded - now in overtime!`);
         }, milliseconds);
 
